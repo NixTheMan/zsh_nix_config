@@ -2,7 +2,6 @@
 This repo contains scripts for setting up a linux development environment.
 
 ## Installation
----
 
 To install clone this repository with
 
