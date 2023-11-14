@@ -1,4 +1,4 @@
-#!/usr/bin/zsh
+#!/usr/bin/bash
 
 ###################
 # ZSH apt Install #
@@ -78,10 +78,18 @@ else
     echo "Zsh zsh-syntax-highlighting seems to have already been downloaded..."
 fi
 
-# Adding websearch plugin for Oh-my-zsh
-echo "Adding web-search plugin..."
-sed -i '/plugins=(/a\\tweb-search' ~/.zshrc
+if command zsh --version &> /dev/null
+then
+    # Adding websearch plugin for Oh-my-zsh
+    echo "Adding web-search plugin..."
+    sed -i '/plugins=(/a\\tweb-search' ~/.zshrc
 
+    # Adding PATH to zshrc
+    sed -i 's/\# export PATH=$HOME\/bin:\/usr\/local\/bin:$PATH/export PATH=$HOME\/bin:\/usr\/local\/bin:$HOME\/.local\/bin:$PATH/g' ~/.zshrc
+else
+    echo "ZSH not properly installed. Exiting..."
+    exit 1
+fi
 
 ##################
 # Poetry Install #
@@ -120,76 +128,114 @@ poetry config virtualenvs.in-project true
 # Kubectl Install #
 ###################
 
-read "installtype?Enter x86-64 or arm64 for kubectl install type [x86-64]: "
-installtype=${installtype:-"x86-64"}
-read "version?Enter version of kubectl to install [latest-stable]: "
-version=${version:-latest}
-echo $installtype
-
-echo "Downloading kubectl binary..."
-if [ $version = latest ]
+if ! command v kubectl --version &> /dev/null
 then
-    echo "reached"
-    if [ $installtype = "x86-64" ]
-    then
-        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-    elif [ $installtype = "arm64" ]
-    then
-        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl"
-    else
-        echo $installtype " not recognized..."
-    fi
-else
+    read "installtype?Enter x86-64 or arm64 for kubectl install type [x86-64]: "
+    installtype=${installtype:-"x86-64"}
+    read "version?Enter version of kubectl to install [latest-stable]: "
+    version=${version:-latest}
+    echo $installtype
 
-    if [ $installtype = "x86-64" ]
+    echo "Downloading kubectl binary..."
+    if [ $version = latest ]
     then
-        curl -LO https://dl.k8s.io/release/$(echo $version)/bin/linux/amd64/kubectl
-    elif [ $installtype = "arm64" ]
-    then
-        curl -LO https://dl.k8s.io/release/$(echo $version)/bin/linux/arm64/kubectl
+        echo "reached"
+        if [ $installtype = "x86-64" ]
+        then
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        elif [ $installtype = "arm64" ]
+        then
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl"
+        else
+            echo $installtype " not recognized..."
+        fi
     else
-        echo $installtype " not recognized..."
+
+        if [ $installtype = "x86-64" ]
+        then
+            curl -LO https://dl.k8s.io/release/$(echo $version)/bin/linux/amd64/kubectl
+        elif [ $installtype = "arm64" ]
+        then
+            curl -LO https://dl.k8s.io/release/$(echo $version)/bin/linux/arm64/kubectl
+        else
+            echo $installtype " not recognized..."
+        fi
     fi
+
+    # Checking kubectl checksum
+    echo "Downloading checksum for kubectl..."
+    if [ $version = latest ]
+    then
+        if [ $installtype = "x86-64" ]
+        then
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+        elif [ $installtype = "arm64" ]
+        then
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl.sha256"
+        else
+            echo $installtype " not recognized..."
+        fi
+    else
+        if [ $installtype = "x86-64" ]
+        then
+            curl -LO "https://dl.k8s.io/release/$(echo $version)/bin/linux/amd64/kubectl.sha256"
+        elif [ $installtype = "arm64" ]
+        then
+            curl -LO "https://dl.k8s.io/release/$(echo $version)/bin/linux/arm64/kubectl.sha256"
+        else
+            echo $installtype " not recognized..."
+        fi
+    fi
+
+    echo "Checking checksum..."
+    echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+    rm kubectl.sha256
+
+    # Making kubectl executable
+    chmod +x kubectl
+    mkdir -p ~/.local/bin
+    mv ./kubectl ~/.local/bin/kubectl
+    # and then append (or prepend) ~/.local/bin to $PATH
+    echo "Kubectl installed..."
+
+    echo "Adding kubectl plugin..."
+    sed -i '/plugins=(/a\\tkubectl' ~/.zshrc
+else
+    echo "kubectl installed. Skipping installation..."
 fi
 
-# Checking kubectl checksum
-echo "Downloading checksum for kubectl..."
-if [ $version = latest ]
+################
+# Rust Install #
+################
+
+echo "Checking for Rust installation..."
+if ! command -v rustc --version &> /dev/null
 then
-    if [ $installtype = "x86-64" ]
-    then
-           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
-    elif [ $installtype = "arm64" ]
-    then
-           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl.sha256"
-    else
-        echo $installtype " not recognized..."
-    fi
+    echo "No Rust installation found. Installing Rust..."
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    echo "Rust installed..."
+    rustup 
 else
-    if [ $installtype = "x86-64" ]
-    then
-           curl -LO "https://dl.k8s.io/release/$(echo $version)/bin/linux/amd64/kubectl.sha256"
-    elif [ $installtype = "arm64" ]
-    then
-           curl -LO "https://dl.k8s.io/release/$(echo $version)/bin/linux/arm64/kubectl.sha256"
-    else
-        echo $installtype " not recognized..."
-    fi
+    echo "Rust installation found. Skipping installation..."
 fi
 
-echo "Checking checksum..."
-echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+########################
+# Helix Editor Install #
+########################
 
-# Making kubectl executable
-chmod +x kubectl
-mkdir -p ~/.local/bin
-mv ./kubectl ~/.local/bin/kubectl
-# and then append (or prepend) ~/.local/bin to $PATH
-echo "Kubectl installed..."
+echo "Checking for Helix editor..."
+if ! command -v hx --version &> /dev/null
+then
+    echo "No Helix Editor installation found. Installing Helix..."
+    git clone https://github.com/helix-editor/helix $HOME/helix/
+    cd $HOME/helix
+    cargo install --path helix-term --locked
+    ln -Ts $PWD/runtime ~/.config/helix/runtime
 
-echo "Adding kubectl plugin..."
-sed -i '/plugins=(/a\\tkubectl' ~/.zshrc
-
+    echo "Helix installed..."
+else
+    echo "Helix installation found. Skipping installation..."
+fi
 
 ###########
 # Exiting #
