@@ -128,7 +128,7 @@ poetry config virtualenvs.in-project true
 # Kubectl Install #
 ###################
 
-if ! command v kubectl --version &> /dev/null
+if ! command v kubectl version &> /dev/null
 then
     read "installtype?Enter x86-64 or arm64 for kubectl install type [x86-64]: "
     installtype=${installtype:-"x86-64"}
