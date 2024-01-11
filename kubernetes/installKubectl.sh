@@ -70,18 +70,23 @@ then
             fi
 
             echo "Checking checksum..."
-            echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
-            rm kubectl.sha256
+            checksum=$(echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check)
+            if [[ $checksum == *"OK"* ]]
+            then                
+                rm kubectl.sha256
 
-            # Making kubectl executable
-            chmod +x kubectl
-            mkdir -p ~/.local/bin
-            mv ./kubectl ~/.local/bin/kubectl
-            # and then append (or prepend) ~/.local/bin to $PATH
-            echo "Kubectl installed..."
+                # Making kubectl executable
+                chmod +x kubectl
+                mkdir -p ~/.local/bin
+                mv ./kubectl ~/.local/bin/kubectl
+                # and then append (or prepend) ~/.local/bin to $PATH
+                echo "Kubectl installed..."
 
-            echo "Adding kubectl plugin..."
-            sed -i '/plugins=(/a\\tkubectl' ~/.zshrc
+                echo "Adding kubectl plugin..."
+                sed -i '/plugins=(/a\\tkubectl' ~/.zshrc
+            else
+                echo "Checksum check failed"
+            fi
             ;;
 
         n | N)
