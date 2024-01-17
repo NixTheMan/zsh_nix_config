@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+bold=$(tput bold)
+normal=$(tput sgr0)
 
 ########################
 # Helix Editor Install #
@@ -8,7 +10,7 @@
 if ! command -v hx --version &> /dev/null
 then
     echo "Beginning installation process for 'helix'."
-    read -p "Install 'helix'? [y/n]: " HELIX_OPTION
+    read -p "Install 'helix'? ([${bold}y${normal}]/n): " HELIX_OPTION
     HELIX_OPTION=${HELIX_OPTION:-"y"}
 
     case $HELIX_OPTION in

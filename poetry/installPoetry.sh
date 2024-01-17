@@ -11,7 +11,7 @@ PoetryConfig () {
     if command poetry --version &> /dev/null
     then
         echo "'Poetry' detected."
-        read -p "Would you like to configure 'Poetry'? [${bold}y${normal}/n]: " POETRY_CONFIG_OPTION
+        read -p "Would you like to configure 'Poetry'? ([${bold}y${normal}]/n): " POETRY_CONFIG_OPTION
         POETRY_CONFIG_OPTION=${POETRY_CONFIG_OPTION:-"y"}
 
         case POETRY_CONFIG_OPTION in

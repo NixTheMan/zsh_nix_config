@@ -12,7 +12,7 @@ ZSH_CUSTOM=$HOME/.oh-my-zsh/custom
 if command zsh --version &> /dev/null
 then
     echo "Beginning installation process for 'oh-my-zsh'."
-    read -p "Install 'oh-my-zsh'? [${bold}y${normal}/n]: " OH_MY_ZSH_OPTION
+    read -p "Install 'oh-my-zsh'? ([${bold}y${normal}]/n): " OH_MY_ZSH_OPTION
     OH_MY_ZSH_OPTION=${OH_MY_ZSH_OPTION:-y}
 
     case $OH_MY_ZSH_OPTION in
@@ -21,7 +21,7 @@ then
             if [ -z "$(ls -A ${ZSH_CUSTOM:-~/.oh-my-zsh/})" ]
             then
                 echo "Installing 'oh-my-zsh'..."
-                sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+                source -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
                 ZSH_CUSTOM=$HOME/.oh-my-zsh/custom
 

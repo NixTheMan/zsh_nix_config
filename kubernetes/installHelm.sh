@@ -1,5 +1,8 @@
 #!/usr/bin/bash
 
+bold=$(tput bold)
+normal=$(tput sgr0)
+
 ###################
 # Kubectl Install #
 ###################
@@ -7,7 +10,7 @@
 if ! command helm version &> /dev/null
 then
     echo "Beginning installation process for 'helm'."
-    read -p "Install 'helm'? [y/n]: " HELM_OPTION
+    read -p "Install 'helm'? ([${bold}y${normal}]/n): " HELM_OPTION
     HELM_OPTION=${HELM_OPTION:-"y"}
 
     case $HELM_OPTION in

@@ -1,5 +1,8 @@
 #!/usr/bin/bash
 
+bold=$(tput bold)
+normal=$(tput sgr0)
+
 ################
 # Rust Install #
 ################
@@ -7,10 +10,11 @@
 if ! command -v hx --version &> /dev/null
 then
     echo "Beginning installation process for 'Rust'."
-    read -p "Install 'Rust'? [y/n]: " RUST_OPTION
-    RUST_OPTION=${RUST_OPTION:-"y"}
+    read -p "Install 'Rust'? ([${bold}y${normal}]/n): " RUST_OPTION
+    RUST_OPTION=${RUST_OPTION:-y}
+    echo $RUST_OPTION
 
-    case $HELIX_OPTION in
+    case $RUST_OPTION in
         y | Y)
             echo "Installing Rust..."
             curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh

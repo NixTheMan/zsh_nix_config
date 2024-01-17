@@ -10,7 +10,7 @@ normal=$(tput sgr0)
 # Offer optional install of ZSH
 
 echo "Beginning installation process for 'zsh'."
-read "ZSH_OPTION?Install 'zsh'? [${bold}y${normal}/n]: "
+read "ZSH_OPTION?Install 'zsh'? ([${bold}y${normal}]/n): "
 ZSH_OPTION=${ZSH_OPTION:-"y"}
 
 case $ZSH_OPTION in

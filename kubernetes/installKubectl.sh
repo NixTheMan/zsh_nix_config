@@ -1,5 +1,8 @@
 #!/usr/bin/bash
 
+bold=$(tput bold)
+normal=$(tput sgr0)
+
 ###################
 # Kubectl Install #
 ###################
@@ -7,7 +10,7 @@
 if ! command kubectl version &> /dev/null
 then
     echo "Beginning installation process for 'kubectl'."
-    read -p "Install 'kubectl'? [y/n]: " KUBECTL_OPTION
+    read -p "Install 'kubectl'? ([${bold}y${normal}]/n): " KUBECTL_OPTION
     KUBECTL_OPTION=${KUBECTL_OPTION:-"y"}
 
     case $KUBECTL_OPTION in
