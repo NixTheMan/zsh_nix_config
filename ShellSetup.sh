@@ -57,7 +57,7 @@ then
                 sed -iH 's/plugins=(git)/plugins=(\n\tgit\n)/g' ~/.zshrc
 
                 # Installing autosuggestions plugin
-                if [ -z "$(ls -A ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions)" ]
+                if [ -d -A ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions ]
                 then
                     echo "Downloading zsh-autosuggestions plugin..."
                     git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
@@ -68,7 +68,7 @@ then
                 fi
 
                 # Installing zsh-syntax-highlighting
-                if [ -z "$(ls -A ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting)" ]
+                if [ -d ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting ]
                 then
                     echo "Downloading zsh-syntax-highlighting plugin..."
                     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
@@ -119,7 +119,7 @@ source ./poetry/installPoetry.sh
 # Kubectl Install #
 ###################
 
-source ./kubectl/installKubectl.sh
+source ./kubernetes/installKubectl.sh
 
 ################
 # Rust Install #
