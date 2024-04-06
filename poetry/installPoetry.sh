@@ -10,14 +10,15 @@ normal=$(tput sgr0)
 PoetryConfig () {
     if command poetry --version &> /dev/null
     then
-        echo "'Poetry' detected."
+        echo && echo "${bold}INFO:${normal}"
+        echo "'Poetry' detected..."
         read -p "Would you like to configure 'Poetry'? ([${bold}y${normal}]/n): " POETRY_CONFIG_OPTION
         POETRY_CONFIG_OPTION=${POETRY_CONFIG_OPTION:-"y"}
 
         case POETRY_CONFIG_OPTION in
 
             y | Y)
-
+                echo && echo "${bold}INFO:${normal}"
                 echo "Configuring Poetry..."
                 if [ -z "$(ls $ZSH_CUSTOM/plugins/poetry)" ]
                 then
@@ -27,23 +28,25 @@ PoetryConfig () {
                     sed -i '/plugins=(/a\\tpoetry' ~/.zshrc
                     poetry config virtualenvs.in-project true
                 else
+                    echo && echo "${bold}INFO:${normal}"
                     echo "Poetry already configured..."
                 fi
                 ;;
             
             n | N)
-
+                echo && echo "${bold}INFO:${normal}"
                 echo "Skipping 'Poetry' configuration..."
                 ;;
             
             *)
-
+                echo && echo "${bold}INFO:${normal}"
                 echo "Unknown option detected. Skipping..."
                 ;;
         esac
     
     else
-        "'Poetry' not detected. Skipping..."
+        echo && echo "${bold}INFO:${normal}"
+        echo "'Poetry' not detected. Skipping..."
     fi    
 }
 
@@ -53,30 +56,41 @@ PoetryConfig () {
 
 if ! command poetry --version &> /dev/null
 then
-    echo "Beginning installation process for 'Poetry'."
+    echo && echo "${bold}INFO:${normal}"
+    echo "Beginning installation process for 'Poetry'..."
     read -p "Install 'Poetry'? [y/n]: " POETRY_OPTION
     POETRY_OPTION=${POETRY_OPTION:-"y"}
 
     case $POETRY_OPTION in
     
         y | Y)
+            echo && echo "${bold}INFO:${normal}"
             echo "Installing poetry..."
             curl -sSL https://install.python-poetry.org | python3 -
 
+            echo && echo "${bold}INFO:${normal}"
+            echo "Adding to PATH..."
             export PATH="$HOME/.local/bin:$PATH"
 
+            echo && echo "${bold}INFO:${normal}"
             echo "Checking installation of Poetry..."
             poetry --version
 
+            echo && echo "${bold}INFO:${normal}"
+            echo "Updating 'Poetry'..."
             poetry self update
-
+            
+            echo && echo "${bold}INFO:${normal}"
+            echo "Entering 'Poetry' configuration..."
             PoetryConfig
             ;;
         
         n | N)
+            echo && echo "${bold}INFO:${normal}"
             echo "Skipping installation of 'Poetry'"
             ;;
         *)
+            echo && echo "${bold}INFO:${normal}"
             echo "Unknown option detected. Skipping..."
             ;;
     esac
